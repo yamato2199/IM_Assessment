@@ -38,8 +38,21 @@ void draw(){
 
 void mouseClicked() {
   //Deal with MIDI program change (which will change the current instrument)
-  if(currentInstrument < 128) currentInstrument+=1;
-  else currentInstrument = 0;
+  switch(mouseButton) {
+     case LEFT: 
+       currentInstrument+=1;
+       break;
+     case RIGHT:
+       currentInstrument-=1;
+       break;
+     default:
+       currentInstrument+=1;
+       break;
+  }
+  if(currentInstrument>127) 
+      currentInstrument = 0;
+  
+  
 }
 
 void setupCamera() {
