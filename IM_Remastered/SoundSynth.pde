@@ -19,4 +19,5 @@ class SoundSynth {
     //myBus.sendControllerChange(0,0 , 80); // Send a controllerChange
     delay(50);
   }
+
 }

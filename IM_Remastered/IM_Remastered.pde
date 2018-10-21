@@ -18,6 +18,7 @@ float keyWidth;
 ParticleSystem particleSystem;
 PImage particleImg; //Image used for create particle effect
 PGraphics particleGraphic;
+PVector particlePos = new PVector(0,0);
 void setup() {
    size(640, 360);
    setupCamera();
@@ -33,6 +34,7 @@ void draw(){
    //testGenerateByMouse();
    renderPianoKeys();
    triggerhitKeys(currentY);
+   renderParticleEffect();
    renderUI();
 }
 
@@ -51,9 +53,22 @@ void mouseClicked() {
   }
   if(currentInstrument>127) 
       currentInstrument = 0;
-  
-  
 }
+void keyPressed() {
+  if (key == CODED) {
+    if (keyCode == LEFT) {
+      currentInstrument-=8;
+    } else if (keyCode == RIGHT) {
+      currentInstrument+=8;
+     
+    } 
+  } 
+ if(currentInstrument>127) 
+      currentInstrument = 0;
+ if(currentInstrument<0) 
+      currentInstrument = 127;
+}
+
 
 void setupCamera() {
   String[] cameras = Capture.list();
@@ -75,7 +90,6 @@ void captureEvent(Capture video) {
 
 int trackPoint(Capture video,color trackColor,float threshold) {
     int currentY = 0;
-    
     float avgX = 0; float avgY = 0;
     int count = 0;
     for (int x = 0; x < video.width; x++ ) {
@@ -144,7 +158,7 @@ void setupPianoKey(){
    // Initial white keys
   for (int i=0; i<whiteKeys.length; i++) {
     whiteKeys[i]=new PianoKey(new PVector((keyWidth*144/24/2)-50, (keyWidth/2+i*keyWidth)-10), 
-      color(#FFFFFF), keyWidth*144/24, keyWidth, 108-i+1);
+      color(#FFFFFF), keyWidth*144/24, keyWidth, 101-i);
   }
 
   // Initial black keys
@@ -169,6 +183,10 @@ void renderPianoKeys(){
 }
 
 void triggerhitKeys(int currentY) {
+  if(currentY == 0) { 
+    particlePos = new PVector(0,0); 
+    return;
+  }
   for (PianoKey pk : whiteKeys) {
     if (currentY > pk.pos.y && currentY < pk.pos.y+pk.keyWid) {
       //Apply Sound Synth
@@ -176,9 +194,10 @@ void triggerhitKeys(int currentY) {
       //Pressed key color change
       pk.press();
       //Particle Effect
-      if(Config.ENABLE_PARTICLE) applyParticleEffect(new PVector(pk.pos.x + pk.keyLen,pk.pos.y));
+      if(Config.ENABLE_PARTICLE) particlePos = new PVector(pk.pos.x + pk.keyLen,pk.pos.y);
     }
   }
+ 
 }
 
 void setupParticleEffect() {
@@ -186,19 +205,21 @@ void setupParticleEffect() {
     particleImg =loadImage(Config.PARTICLE_IMG_NAME);
     particleSystem = new ParticleSystem(0, new PVector(0, 0),particleImg,particleGraphic);
 }
-
+void renderParticleEffect() {
+    applyParticleEffect(particlePos);
+}
 void applyParticleEffect(PVector pos){
   particleGraphic.beginDraw();
   particleGraphic.background(0, 10);
-  
   particleSystem.origin=pos;
   PVector wind = new PVector(0, 0);
   particleSystem.applyForce(wind);
   particleSystem.run();
-  for (int i = 0; i < 15; i++) {
-    particleSystem.addParticle();
+  if(!pos.equals(new PVector(0,0))) {
+    for (int i = 0; i < 15; i++) {
+      particleSystem.addParticle();
+    }
   }
-  
   particleGraphic.endDraw();
   image(particleGraphic, 0, 0);
 }
@@ -206,5 +227,7 @@ void applyParticleEffect(PVector pos){
 void renderUI() {
   fill(255,255,255);
   textSize(20);
-  text("Instrument: "+ Utils.NumberToMIDIInstrument(currentInstrument) , width-500, 30); 
+  text("Instrument Class:"+Utils.NumberToMIDIInstrumentClass(currentInstrument) +"\nInstrument: "+ Utils.NumberToMIDIInstrument(currentInstrument) , width-520, 30); 
+  textSize(13);
+  text("Hint: < & > change instrument class\nmouse right & left change instrument",width-250, height-30);
 }

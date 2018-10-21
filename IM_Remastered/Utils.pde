@@ -9,6 +9,44 @@ public static class Utils {
     return d;
   }
  
+  public static String NumberToMIDIInstrumentClass(int programNumber) {
+     String type = "Unknown";
+     if(programNumber >= 0 && programNumber <= 7) {
+       type = "Piano";
+     } else if(programNumber >= 8 && programNumber <= 15) {
+       type = "Chromatic Percussion";
+     } else if(programNumber >= 16 && programNumber <= 23) {
+       type = "Organ";
+     } else if(programNumber >= 24 && programNumber <= 31) {
+       type = "Guitar";
+     } else if(programNumber >= 32 && programNumber <= 39) {
+       type = "Bass";
+     } else if(programNumber >= 40 && programNumber <= 47) {
+       type = "Strings";
+     } else if(programNumber >= 48 && programNumber <= 55) {
+       type = "Ensemble";
+     } else if(programNumber >= 56 && programNumber <= 63) {
+       type = "Brass";
+     } else if(programNumber >= 64 && programNumber <= 71) {
+       type = "Reed";
+     } else if(programNumber >= 72 && programNumber <= 79) {
+       type = "Pipe";
+     } else if(programNumber >= 80 && programNumber <= 87) {
+       type = "Synth Lead";
+     } else if(programNumber >= 88 && programNumber <= 95) {
+       type = "Synth Pad";
+     } else if(programNumber >= 96 && programNumber <= 103) {
+       type = "Synth Effects";
+     } else if(programNumber >= 104 && programNumber <= 111) {
+       type = "Ethnic";
+     } else if(programNumber >= 112 && programNumber <= 119) {
+       type = "Percussive";
+     } else if(programNumber >= 120 && programNumber <= 127) {
+       type = "Sound effects";
+     }
+     
+     return type;
+  }
   public static String NumberToMIDIInstrument(int programNumber) {
       String GM_Instruments[] = new String[128];
       //Setup MIDI Intrucment lookup Table

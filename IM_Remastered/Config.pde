@@ -7,5 +7,5 @@ public static class Config {
    // Particle Image
    public static final String PARTICLE_IMG_NAME = "texture.png";
    // Toogle enable / disable partticle effect
-   public static final boolean ENABLE_PARTICLE = false;
+   public static final boolean ENABLE_PARTICLE = true;
 }
