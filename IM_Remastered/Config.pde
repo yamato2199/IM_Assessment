@@ -8,4 +8,7 @@ public static class Config {
    public static final String PARTICLE_IMG_NAME = "texture.png";
    // Toogle enable / disable partticle effect
    public static final boolean ENABLE_PARTICLE = true;
+   // MIDI OUTPUT DEVICES (Please change it according to your system settings)
+   public static final int MIDI_OUPUT_DEVICES = 2;
+
 }

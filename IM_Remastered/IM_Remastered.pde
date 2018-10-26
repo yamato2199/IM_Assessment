@@ -142,7 +142,7 @@ void testGenerateByMouse() {
     
 }
 void setupSound() {
-  synth = new SoundSynth(2,noteDelay);
+  synth = new SoundSynth(Config.MIDI_OUPUT_DEVICES,noteDelay);
 }
 void synthSound(int currentPitch) {
     int newPitch = currentPitch;
