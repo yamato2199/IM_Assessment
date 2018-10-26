@@ -31,9 +31,11 @@ void setup() {
 void draw(){
    renderCamera(video);
    int currentY = trackPoint(video,color(255,0,0),130);
+   int currentY2 = trackPoint(video,color(0,0,255),130);
    //testGenerateByMouse();
    renderPianoKeys();
    triggerhitKeys(currentY);
+   triggerhitKeys(currentY2);
    renderParticleEffect();
    renderUI();
 }
