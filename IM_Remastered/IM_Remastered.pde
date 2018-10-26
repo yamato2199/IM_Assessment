@@ -109,9 +109,10 @@ int trackPoint(Capture video,color trackColor,float threshold) {
       float d = Utils.distSq(r1, g1, b1, r2, g2, b2); 
 
       if (d < threshold*threshold) {
+        /*
         stroke(255);
-      
         point(x, y);
+        */
         avgX += x;
         avgY += y;
         count++;
@@ -122,7 +123,7 @@ int trackPoint(Capture video,color trackColor,float threshold) {
     avgX = avgX / count;
     avgY = avgY / count;
     // Draw a circle at the tracked pixel
-    fill(255);
+    fill(trackColor);
     strokeWeight(4.0);
     stroke(0);
     ellipse(avgX, avgY, 24, 24);
