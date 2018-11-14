@@ -5,6 +5,7 @@ class PianoKey {
   color keyColor;
   public float keyLen, keyWid;
   public int pitch;
+  boolean isPressed = false;
 
   PianoKey(PVector pos, color keyColor, float keyLen, float keyWid, int pitch) {
     this.pos=pos;
@@ -25,8 +26,11 @@ class PianoKey {
     else {
       rect(pos.x, pos.y, keyLen, keyWid, 1, 8, 8, 1);
     }
+    isPressed = true;
   }
-
+  void unpress() {
+    isPressed = false;
+  }
   void show() {
     fill(keyColor);
     strokeWeight(2);

@@ -13,12 +13,17 @@ int playWidth=Config.PLAY_WIDTH;  // The width of the piano playing area
 PianoKey[] whiteKeys, blackKeys;
 int numKeys=Config.TOTAL_KEYS;  // Number of key(odd)
 float keyWidth; 
+ArrayList<PianoKey> pressedKeys = new ArrayList<PianoKey>();
+
 ///////////////////////
 /////// Effects ///////
 ParticleSystem particleSystem;
 PImage particleImg; //Image used for create particle effect
 PGraphics particleGraphic;
 PVector particlePos = new PVector(0,0);
+
+ArrayList<Block> blocks = new ArrayList<Block>();
+
 void setup() {
    size(1280, 720);
    setupCamera();
@@ -29,15 +34,20 @@ void setup() {
 }
 
 void draw(){
+  
    renderCamera(video);
-   int currentY = trackPoint(video,color(255,0,0),130);
-   int currentY2 = trackPoint(video,color(0,0,255),130);
+   blocks.clear();
+   
+   trackBlocks(video,color(0,0,255),130);
+
    //testGenerateByMouse();
    renderPianoKeys();
-   triggerhitKeys(currentY);
-   triggerhitKeys(currentY2);
+   //triggerhitKeys(currentY);
+   //triggerhitKeys(currentY2);
+   triggerKeys();
    renderParticleEffect();
    renderUI();
+   
 }
 
 void mouseClicked() {
@@ -88,6 +98,46 @@ void captureEvent(Capture video) {
   prev.copy(video, 0, 0, video.width, video.height, 0, 0, prev.width, prev.height);
   prev.updatePixels();
   video.read();
+}
+int trackBlocks(Capture video,color trackColor,float threshold) {
+    int currentY = 0;
+    
+    for (int x = 0; x < video.width; x++ ) {
+    for (int y = 0; y < video.height; y++ ) {
+      int loc = x + y * video.width;
+      // What is current color
+      color currentColor = video.pixels[loc];
+      float r1 = red(currentColor);
+      float g1 = green(currentColor);
+      float b1 = blue(currentColor);
+      float r2 = red(trackColor);
+      float g2 = green(trackColor);
+      float b2 = blue(trackColor);
+
+      float d = Utils.distSq(r1, g1, b1, r2, g2, b2); 
+
+      if (d < threshold*threshold) {
+        boolean find = false;
+        for(Block b : blocks){
+            if(b.isNear(x,y)) {
+                b.add(x,y);
+                 find = true;
+                 break;
+            }
+        }
+        if(!find && blocks.size() < Config.MAX_BLOCKS){
+           Block b = new Block(x,y);
+           blocks.add(b);
+        }
+      }
+    }
+  }
+  
+  //Show Blocks
+  for(Block b: blocks){
+     b.show(); 
+  }
+  return currentY;
 }
 
 int trackPoint(Capture video,color trackColor,float threshold) {
@@ -160,13 +210,13 @@ void setupPianoKey(){
   //Key setup
    // Initial white keys
   for (int i=0; i<whiteKeys.length; i++) {
-    whiteKeys[i]=new PianoKey(new PVector((keyWidth*144/24/2)-150, (keyWidth/2+i*keyWidth)-20), 
+    whiteKeys[i]=new PianoKey(new PVector((keyWidth*144/24/2)-200, (keyWidth/2+i*keyWidth)-20), 
       color(#FFFFFF), keyWidth*144/24, keyWidth, 101-i);
   }
 
   // Initial black keys
   for (int i=0; i<blackKeys.length; i++) {
-    blackKeys[i]=new PianoKey(new PVector((keyWidth*86/24/2)-200, ((i+1)*keyWidth)-7), 
+    blackKeys[i]=new PianoKey(new PVector((keyWidth*86/24/2)-150, ((i+1)*keyWidth)-5), 
       color(#000000), keyWidth*86/24, keyWidth*9/24, i+1);
   }
   
@@ -184,24 +234,26 @@ void renderPianoKeys(){
   }
 
 }
-
+void triggerKeys(){
+    //Find all triggered points from blocks
+    for(Block b : blocks){
+      triggerhitKeys((int)b.position().y);
+    }
+}
 void triggerhitKeys(int currentY) {
   if(currentY == 0) { 
     particlePos = new PVector(0,0); 
     return;
   }
-  
   for (PianoKey pk : whiteKeys) {
-    if (currentY > pk.pos.y && currentY < pk.pos.y+pk.keyWid ) {
+    if (currentY > pk.pos.y && currentY < pk.pos.y+pk.keyWid) {
       //Apply Sound Synth
-      if(!pk.isPressed)synthSound(pk.pitch);
+      synthSound(pk.pitch);
       //Pressed key color change
       pk.press();
+      
       //Particle Effect
       if(Config.ENABLE_PARTICLE) particlePos = new PVector(pk.pos.x + pk.keyLen,pk.pos.y);
-      break;
-    } else {
-      pk.unpress();
     }
   }
  
