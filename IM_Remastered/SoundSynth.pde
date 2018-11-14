@@ -10,14 +10,14 @@ class SoundSynth {
   }
   
   public void play(int pitch,int program) {
-    int PROGRAM_CHANGE_STAUTS = 0xC0;
-    myBus.sendMessage(PROGRAM_CHANGE_STAUTS, 0, program, 0); 
-    myBus.sendNoteOn(0,pitch,127);
-    delay(noteDelay);
-    myBus.sendNoteOff(0,pitch,127);
     
-    //myBus.sendControllerChange(0,0 , 80); // Send a controllerChange
-    delay(50);
+ 
+      int PROGRAM_CHANGE_STAUTS = 0xC0;
+      myBus.sendMessage(PROGRAM_CHANGE_STAUTS, 0, program, 0); 
+      myBus.sendNoteOn(0,pitch,127);
+      //delay(noteDelay);
+      myBus.sendNoteOff(0,pitch,127);
+ 
   }
 
 }
