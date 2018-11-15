@@ -166,7 +166,7 @@ void setupPianoKey(){
 
   // Initial black keys
   for (int i=0; i<blackKeys.length; i++) {
-    blackKeys[i]=new PianoKey(new PVector((keyWidth*86/24/2)-200, ((i+1)*keyWidth)-7), 
+    blackKeys[i]=new PianoKey(new PVector((keyWidth*86/24/2)-100, ((i+1)*keyWidth)-8), 
       color(#000000), keyWidth*86/24, keyWidth*9/24, i+1);
   }
   
